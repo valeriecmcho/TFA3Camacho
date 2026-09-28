@@ -103,7 +103,15 @@
 
         <h1>Customer Accounts</h1>
 
-        <p><a href="<?= base_url('customers/new') ?>" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">+ Add New Customer</a></p>
+        <?php if (isset($error)): ?>
+            <div style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                <strong>Error:</strong> <?= esc($error) ?>
+                <br><br>
+                <a href="<?= base_url('customer-accounts/setup') ?>" class="btn btn-primary">Setup Database</a>
+            </div>
+        <?php else: ?>
+            <p><a href="<?= base_url('customers/new') ?>" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">+ Add New Customer</a></p>
+        <?php endif; ?>
 
         <?php if (!empty($customers) && is_array($customers)): ?>
             <table>

@@ -8,20 +8,33 @@ class CustomerAccounts extends BaseController
 {
     public function index()
     {
-        $customerModel = new CustomerModel();
-        $data['customers'] = $customerModel->findAll();
+        try {
+            $customerModel = new CustomerModel();
+            $data['customers'] = $customerModel->findAll();
 
-        return view('customer_accounts', $data);
+            return view('customer_accounts', $data);
+        } catch (\Exception $e) {
+            // If database is not available, show error message
+            $data['error'] = 'Database connection failed: ' . $e->getMessage();
+            $data['customers'] = [];
+            return view('customer_accounts', $data);
+        }
     }
 
     public function setupDatabase()
     {
+        // Show the setup page
+        return view('database_setup');
+    }
+
+    public function performSetup()
+    {
         // This method will setup the database tables and sample data
         // Only run this in development or when database needs to be initialized
-        $db = \Config\Database::connect();
-        $dbDriver = $db->DBDriver;
-
         try {
+            $db = \Config\Database::connect();
+            $dbDriver = $db->DBDriver;
+
             if ($dbDriver === 'Postgre') {
                 // PostgreSQL syntax
                 $db->query("CREATE TABLE IF NOT EXISTS customers (
@@ -103,7 +116,7 @@ class CustomerAccounts extends BaseController
             return redirect()->to('/customer-accounts')->with('success', 'Database setup completed successfully');
 
         } catch (\Exception $e) {
-            return redirect()->to('/customer-accounts')->with('error', 'Database setup failed: ' . $e->getMessage());
+            return redirect()->to('/customer-accounts/setup')->with('error', 'Database setup failed: ' . $e->getMessage());
         }
     }
 
