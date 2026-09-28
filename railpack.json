@@ -1,12 +1,13 @@
 {
   "build": {
     "builder": "railpack",
-    "buildCommand": "composer install --no-dev --optimize-autoloader",
+    "buildCommand": "cp .env.railway .env && composer install --no-dev --optimize-autoloader",
     "watchPatterns": [
       "app/**",
       "public/**",
       "composer.json",
-      "composer.lock"
+      "composer.lock",
+      ".env.railway"
     ]
   },
   "deploy": {
