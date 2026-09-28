@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User - POS System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .nav {
+            margin-bottom: 20px;
+        }
+        .nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .avatar-preview {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .avatar-preview img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 5px;
+            border: 2px solid #ddd;
+        }
+        .avatar-placeholder {
+            width: 150px;
+            height: 150px;
+            background-color: #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            color: #666;
+            font-size: 14px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .error-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .error-list li {
+            margin-bottom: 5px;
+        }
+        .file-help {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="<?= base_url() ?>">Home</a>
+            <a href="<?= base_url('customer-accounts') ?>">Customer Accounts</a>
+            <a href="<?= base_url('user-accounts') ?>">User Accounts</a>
+        </div>
+
+        <h1>Edit User</h1>
+
+        <?php if (session()->getFlashdata('errors')): ?>
+            <div class="alert alert-danger">
+                <ul class="error-list">
+                    <?php foreach (session()->getFlashdata('errors') as $error): ?>
+                        <li><?= esc($error) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger">
+                <?= esc(session()->getFlashdata('error')) ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="<?= base_url('users/update/' . $user['id']) ?>" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="username">Username *</label>
+                <input type="text" id="username" name="username" required
+                       value="<?= old('username', esc($user['username'])) ?>"
+                       placeholder="Enter username">
+            </div>
+
+            <div class="form-group">
+                <label for="full_name">Full Name *</label>
+                <input type="text" id="full_name" name="full_name" required
+                       value="<?= old('full_name', esc($user['full_name'])) ?>"
+                       placeholder="Enter full name">
+            </div>
+
+            <div class="form-group">
+                <label for="avatar">Profile Picture</label>
+                <input type="file" id="avatar" name="avatar" accept="image/jpeg,image/jpg,image/png">
+                <p class="file-help">Allowed formats: JPG, PNG. Maximum size: 2MB</p>
+
+                <div class="avatar-preview">
+                    <?php if (!empty($user['avatar'])): ?>
+                        <img src="<?= base_url('uploads/thumb_' . $user['avatar']) ?>" alt="Avatar">
+                        <div style="margin-top: 10px;">
+                            <button type="submit" name="remove_avatar" value="1" class="btn btn-sm btn-danger">Remove Avatar</button>
+                        </div>
+                    <?php else: ?>
+                        <div class="avatar-placeholder">No Avatar</div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update User</button>
+            <a href="<?= base_url('user-accounts') ?>" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

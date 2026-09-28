@@ -1,0 +1,10 @@
+CRITICAL - 2026-09-28 05:59:02 --> Error: Call to undefined function App\Controllers\imagecreatefrompng()
+[Method: POST, Route: users/update/1]
+in APPPATH\Controllers\UserAccounts.php on line 119.
+ 1 APPPATH\Controllers\UserAccounts.php(91): App\Controllers\UserAccounts->createThumbnail('C:\\xampp\\htdocs\\TFA2Camacho\\public/uploads/1790575142_cbdd894ea23af44fc2e4.png', 'C:\\xampp\\htdocs\\TFA2Camacho\\public/uploads/thumb_1790575142_cbdd894ea23af44fc2e4.png', 150, 150)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\UserAccounts->update('1')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\UserAccounts))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
