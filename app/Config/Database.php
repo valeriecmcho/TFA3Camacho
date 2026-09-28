@@ -206,6 +206,13 @@ class Database extends Config
             $this->default['DBCollat'] = '';
         }
 
+        // Check if we're using PostgreSQL for environment-specific settings
+        if ($this->default['DBDriver'] === 'Postgre') {
+            $this->default['port'] = $this->default['port'] ?? 5432;
+            $this->default['charset'] = 'utf8';
+            $this->default['DBCollat'] = '';
+        }
+
         // Ensure that we always set the database group to 'tests' if
         // we are currently running an automated test suite, so that
         // we don't overwrite live data on accident.

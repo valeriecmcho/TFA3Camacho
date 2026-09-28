@@ -14,6 +14,99 @@ class CustomerAccounts extends BaseController
         return view('customer_accounts', $data);
     }
 
+    public function setupDatabase()
+    {
+        // This method will setup the database tables and sample data
+        // Only run this in development or when database needs to be initialized
+        $db = \Config\Database::connect();
+        $dbDriver = $db->DBDriver;
+
+        try {
+            if ($dbDriver === 'Postgre') {
+                // PostgreSQL syntax
+                $db->query("CREATE TABLE IF NOT EXISTS customers (
+                    id SERIAL PRIMARY KEY,
+                    full_name VARCHAR(100) NOT NULL,
+                    email VARCHAR(100) NOT NULL,
+                    phone VARCHAR(20),
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )");
+
+                $db->query("CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    username VARCHAR(50) NOT NULL UNIQUE,
+                    full_name VARCHAR(100) NOT NULL,
+                    avatar VARCHAR(255) DEFAULT NULL,
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )");
+
+                // Insert sample data if tables are empty
+                $customerCount = $db->query("SELECT COUNT(*) as count FROM customers")->getRow()->count;
+                if ($customerCount == 0) {
+                    $db->query("INSERT INTO customers (full_name, email, phone, created_at) VALUES
+                        ('Juan Dela Cruz', 'juan@example.com', '09171234567', NOW()),
+                        ('Maria Santos', 'maria@example.com', '09181234567', NOW()),
+                        ('Pedro Reyes', 'pedro@example.com', '09191234567', NOW()),
+                        ('Ana Garcia', 'ana@example.com', '09201234567', NOW()),
+                        ('Mark Flores', 'mark@example.com', '09211234567', NOW())");
+                }
+
+                $userCount = $db->query("SELECT COUNT(*) as count FROM users")->getRow()->count;
+                if ($userCount == 0) {
+                    $db->query("INSERT INTO users (username, full_name, created_at) VALUES
+                        ('admin', 'Administrator', NOW()),
+                        ('cashier1', 'John Smith', NOW()),
+                        ('cashier2', 'Jane Doe', NOW()),
+                        ('manager', 'Robert Johnson', NOW()),
+                        ('supervisor', 'Emily Brown', NOW())");
+                }
+            } else {
+                // MySQL syntax
+                $db->query("CREATE TABLE IF NOT EXISTS customers (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    full_name VARCHAR(100) NOT NULL,
+                    email VARCHAR(100) NOT NULL,
+                    phone VARCHAR(20),
+                    created_at DATETIME NOT NULL
+                )");
+
+                $db->query("CREATE TABLE IF NOT EXISTS users (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    username VARCHAR(50) NOT NULL UNIQUE,
+                    full_name VARCHAR(100) NOT NULL,
+                    avatar VARCHAR(255) DEFAULT NULL,
+                    created_at DATETIME NOT NULL
+                )");
+
+                // Insert sample data if tables are empty
+                $customerCount = $db->query("SELECT COUNT(*) as count FROM customers")->getRow()->count;
+                if ($customerCount == 0) {
+                    $db->query("INSERT INTO customers (full_name, email, phone, created_at) VALUES
+                        ('Juan Dela Cruz', 'juan@example.com', '09171234567', NOW()),
+                        ('Maria Santos', 'maria@example.com', '09181234567', NOW()),
+                        ('Pedro Reyes', 'pedro@example.com', '09191234567', NOW()),
+                        ('Ana Garcia', 'ana@example.com', '09201234567', NOW()),
+                        ('Mark Flores', 'mark@example.com', '09211234567', NOW())");
+                }
+
+                $userCount = $db->query("SELECT COUNT(*) as count FROM users")->getRow()->count;
+                if ($userCount == 0) {
+                    $db->query("INSERT INTO users (username, full_name, created_at) VALUES
+                        ('admin', 'Administrator', NOW()),
+                        ('cashier1', 'John Smith', NOW()),
+                        ('cashier2', 'Jane Doe', NOW()),
+                        ('manager', 'Robert Johnson', NOW()),
+                        ('supervisor', 'Emily Brown', NOW())");
+                }
+            }
+
+            return redirect()->to('/customer-accounts')->with('success', 'Database setup completed successfully');
+
+        } catch (\Exception $e) {
+            return redirect()->to('/customer-accounts')->with('error', 'Database setup failed: ' . $e->getMessage());
+        }
+    }
+
     public function new()
     {
         return view('customer_new');

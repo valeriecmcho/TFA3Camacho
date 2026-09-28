@@ -13,6 +13,7 @@ $routes->get('operations/compute', 'Operations::compute');
 
 // POS System Routes
 $routes->get('customer-accounts', 'CustomerAccounts::index');
+$routes->get('customer-accounts/setup', 'CustomerAccounts::setupDatabase');
 $routes->get('customers/new', 'CustomerAccounts::new');
 $routes->post('customers/create', 'CustomerAccounts::create');
 $routes->get('customers/edit/(:num)', 'CustomerAccounts::edit/$1');
