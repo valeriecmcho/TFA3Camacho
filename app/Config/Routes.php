@@ -79,13 +79,23 @@ $routes->get('debug', function() {
 
 // Health check endpoint for Railway
 $routes->get('health', function() {
-    http_response_code(200);
-    echo json_encode([
-        'status' => 'healthy',
-        'timestamp' => date('Y-m-d H:i:s'),
-        'php_version' => PHP_VERSION,
-        'database_url_set' => getenv('DATABASE_URL') !== false
-    ]);
+    try {
+        http_response_code(200);
+        echo json_encode([
+            'status' => 'healthy',
+            'timestamp' => date('Y-m-d H:i:s'),
+            'php_version' => PHP_VERSION,
+            'database_url_set' => getenv('DATABASE_URL') !== false,
+            'environment' => ENVIRONMENT ?? 'unknown'
+        ]);
+    } catch (\Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'status' => 'unhealthy',
+            'error' => $e->getMessage(),
+            'timestamp' => date('Y-m-d H:i:s')
+        ]);
+    }
 });
 $routes->get('customers/new', 'CustomerAccounts::new');
 $routes->post('customers/create', 'CustomerAccounts::create');
