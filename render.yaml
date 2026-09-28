@@ -3,7 +3,6 @@ services:
     name: tfa3camacho
     env: php
     plan: free
-    buildCommand: bash build.sh
     startCommand: php -S localhost:8080 -t public
     envVars:
       - key: CI_ENVIRONMENT
