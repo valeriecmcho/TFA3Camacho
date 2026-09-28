@@ -1,8 +1,9 @@
 services:
   - type: web
     name: tfa3camacho
-    env: php
+    runtime: php
     plan: free
+    buildCommand: echo "No build needed"
     startCommand: php -S localhost:8080 -t public
     envVars:
       - key: CI_ENVIRONMENT
