@@ -1,5 +1,13 @@
 [build]
-builder = "NIXPACKS"
+builder = "RAILPACK"
 
 [build.env]
 PHP_VERSION = "8.2"
+CI_ENVIRONMENT = "production"
+
+# Database configuration will be provided by Railway
+# DATABASE_URL is automatically set when you add a PostgreSQL service
+
+# Optional: Set encryption key for production
+# Generate with: php spark key:generate
+# encryption.key = "your-generated-key-here"

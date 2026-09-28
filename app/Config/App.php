@@ -16,7 +16,26 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public string $baseURL = 'http://localhost/TFA3Camacho/';
+    public string $baseURL = '';
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Set base URL from environment variable or auto-detect
+        $envBaseURL = env('app.baseURL', '');
+        $this->baseURL = $envBaseURL !== '' ? $envBaseURL : $this->detectBaseURL();
+    }
+
+    /**
+     * Auto-detect base URL from current request
+     */
+    private function detectBaseURL(): string
+    {
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        return $protocol . '://' . $host . '/';
+    }
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.

@@ -1,0 +1,21 @@
+{
+  "build": {
+    "builder": "railpack",
+    "buildCommand": "composer install --no-dev --optimize-autoloader",
+    "watchPatterns": [
+      "app/**",
+      "public/**",
+      "composer.json",
+      "composer.lock"
+    ]
+  },
+  "deploy": {
+    "startCommand": "php -S 0.0.0.0:$PORT -t public",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 100
+  },
+  "environment": {
+    "PHP_VERSION": "8.2",
+    "CI_ENVIRONMENT": "production"
+  }
+}

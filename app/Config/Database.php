@@ -197,14 +197,16 @@ class Database extends Config
         if (getenv('DATABASE_URL')) {
             try {
                 $dbUrl = parse_url(getenv('DATABASE_URL'));
-                $this->default['hostname'] = $dbUrl['host'];
-                $this->default['port'] = $dbUrl['port'] ?? 5432;
-                $this->default['database'] = ltrim($dbUrl['path'], '/');
-                $this->default['username'] = $dbUrl['user'];
-                $this->default['password'] = $dbUrl['pass'];
-                $this->default['DBDriver'] = 'Postgre';
-                $this->default['charset'] = 'utf8';
-                $this->default['DBCollat'] = '';
+                if ($dbUrl && isset($dbUrl['host'])) {
+                    $this->default['hostname'] = $dbUrl['host'];
+                    $this->default['port'] = $dbUrl['port'] ?? 5432;
+                    $this->default['database'] = ltrim($dbUrl['path'] ?? '', '/');
+                    $this->default['username'] = $dbUrl['user'] ?? '';
+                    $this->default['password'] = $dbUrl['pass'] ?? '';
+                    $this->default['DBDriver'] = 'Postgre';
+                    $this->default['charset'] = 'utf8';
+                    $this->default['DBCollat'] = '';
+                }
             } catch (\Exception $e) {
                 // If DATABASE_URL is invalid, use default configuration
                 log_message('error', 'Failed to parse DATABASE_URL: ' . $e->getMessage());

@@ -13,8 +13,18 @@ class Home extends BaseController
 
             return view('home');
         } catch (\Exception $e) {
-            // If database is not available, show setup page
-            return redirect()->to('/customer-accounts/setup');
+            // If database is not available, show error page with details
+            $data = [
+                'error' => 'Database connection failed: ' . $e->getMessage(),
+                'debug_info' => [
+                    'driver' => env('database.default.DBDriver', 'MySQLi'),
+                    'host' => env('database.default.hostname', 'localhost'),
+                    'database' => env('database.default.database', 'tfa3camacho'),
+                    'database_url_set' => getenv('DATABASE_URL') !== false,
+                ]
+            ];
+
+            return view('error_page', $data);
         }
     }
 }
