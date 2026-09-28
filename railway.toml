@@ -5,6 +5,10 @@ builder = "RAILPACK"
 PHP_VERSION = "8.2"
 CI_ENVIRONMENT = "production"
 
+# Start command for Railway deployment
+[start]
+cmd = "php -S 0.0.0.0:$PORT -t public"
+
 # Database configuration will be provided by Railway
 # DATABASE_URL is automatically set when you add a PostgreSQL service
 
