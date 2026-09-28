@@ -26,11 +26,11 @@ class Database extends Config
      */
     public array $default = [
         'DSN'          => '',
-        'hostname'     => 'localhost',
-        'username'     => '',
-        'password'     => '',
-        'database'     => 'tfa3camacho',
-        'DBDriver'     => 'MySQLi',
+        'hostname'     => env('database.default.hostname', 'localhost'),
+        'username'     => env('database.default.username', ''),
+        'password'     => env('database.default.password', ''),
+        'database'     => env('database.default.database', 'tfa3camacho'),
+        'DBDriver'     => env('database.default.DBDriver', 'MySQLi'),
         'DBPrefix'     => '',
         'pConnect'     => false,
         'DBDebug'      => true,
@@ -41,7 +41,7 @@ class Database extends Config
         'compress'     => false,
         'strictOn'     => false,
         'failover'     => [],
-        'port'         => 3306,
+        'port'         => env('database.default.port', 3306),
         'numberNative' => false,
         'foundRows'    => false,
         'dateFormat'   => [
@@ -192,6 +192,19 @@ class Database extends Config
     public function __construct()
     {
         parent::__construct();
+
+        // Support Railway PostgreSQL
+        if (getenv('DATABASE_URL')) {
+            $dbUrl = parse_url(getenv('DATABASE_URL'));
+            $this->default['hostname'] = $dbUrl['host'];
+            $this->default['port'] = $dbUrl['port'] ?? 5432;
+            $this->default['database'] = ltrim($dbUrl['path'], '/');
+            $this->default['username'] = $dbUrl['user'];
+            $this->default['password'] = $dbUrl['pass'];
+            $this->default['DBDriver'] = 'Postgre';
+            $this->default['charset'] = 'utf8';
+            $this->default['DBCollat'] = '';
+        }
 
         // Ensure that we always set the database group to 'tests' if
         // we are currently running an automated test suite, so that

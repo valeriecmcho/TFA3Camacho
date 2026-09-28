@@ -2,10 +2,14 @@
 nixPkgs = ["php82", "php82Packages.composer"]
 
 [phases.build]
-cmds = ["composer install --no-dev --optimize-autoloader"]
+cmds = ["composer install --no-dev --optimize-autoloader", "php setup_railway_database.php"]
 
 [start]
 cmd = "php -S 0.0.0.0:$PORT -t public"
 
 [variables]
 PHP_VERSION = "8.2"
+CI_ENVIRONMENT = "production"
+
+# Railway will provide these via environment variables
+# DATABASE_URL will be set by Railway automatically

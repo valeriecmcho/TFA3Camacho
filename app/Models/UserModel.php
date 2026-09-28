@@ -8,7 +8,7 @@ class UserModel extends Model
 {
     protected $table = 'users';
     protected $primaryKey = 'id';
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false; // Compatible with both MySQL and PostgreSQL
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
