@@ -1,10 +1,10 @@
 # CodeIgniter
- writable/cache/*
- writable/logs/*
- writable/session/*
- !writable/cache/.gitkeep
- !writable/logs/.gitkeep
- !writable/session/.gitkeep
+writable/cache/*
+writable/logs/*
+writable/session/*
+!writable/cache/.gitkeep
+!writable/logs/.gitkeep
+!writable/session/.gitkeep
 
 # Environment
 .env
