@@ -8,7 +8,7 @@ class CustomerModel extends Model
 {
     protected $table = 'customers';
     protected $primaryKey = 'id';
-    protected $useAutoIncrement = false; // Compatible with both MySQL and PostgreSQL
+    protected $useAutoIncrement = true;
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
