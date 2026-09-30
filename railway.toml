@@ -6,7 +6,6 @@ PHP_VERSION = "8.2"
 CI_ENVIRONMENT = "production"
 
 [deploy]
-[deploy]
 startCommand = "php -S 0.0.0.0:$PORT -t public"
 healthcheckPath = "/health"
 healthcheckTimeout = 100
