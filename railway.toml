@@ -1,5 +1,5 @@
 [build]
-builder = "RAILPACK"
+# builder = "RAILPACK"  # Commented out to use Nixpacks instead
 
 [build.env]
 PHP_VERSION = "8.2"
