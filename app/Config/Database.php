@@ -198,7 +198,7 @@ class Database extends Config
         $this->default['password'] = env('database.default.password', $this->default['password']);
         $this->default['database'] = env('database.default.database', $this->default['database']);
         $this->default['DBDriver'] = env('database.default.DBDriver', $this->default['DBDriver']);
-        $this->default['port']     = env('database.default.port', $this->default['port']);
+        $this->default['port']     = (int) env('database.default.port', $this->default['port']);
 
         $databaseUrl = getenv('DATABASE_PRIVATE_URL')
             ?: getenv('DATABASE_URL')
