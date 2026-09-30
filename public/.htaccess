@@ -2,7 +2,6 @@ Options -Indexes -MultiViews
 
 <IfModule mod_rewrite.c>
 	RewriteEngine On
-	RewriteBase /TFA3Camacho/public/
 
 	# Serve existing files/directories directly
 	RewriteCond %{REQUEST_FILENAME} -f [OR]

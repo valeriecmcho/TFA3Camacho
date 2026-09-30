@@ -16,11 +16,6 @@ $routes->get('customer-accounts', 'CustomerAccounts::index');
 $routes->get('customer-accounts/setup', 'CustomerAccounts::setupDatabase');
 $routes->post('customer-accounts/setup', 'CustomerAccounts::performSetup');
 
-// Standalone database setup script for Railway
-$routes->get('setup-database', function() {
-    include ROOTPATH . 'setup_railway_database.php';
-});
-
 // Debug endpoint for Railway troubleshooting
 $routes->get('debug', function() {
     echo "<h1>Railway Debug Information</h1>";

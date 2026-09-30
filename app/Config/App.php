@@ -22,19 +22,31 @@ class App extends BaseConfig
     {
         parent::__construct();
 
-        // Set base URL from environment variable or auto-detect
-        $envBaseURL = env('app.baseURL', '');
-        $this->baseURL = $envBaseURL !== '' ? $envBaseURL : $this->detectBaseURL();
+        $envBaseURL = env('app.baseURL', env('app_baseURL', ''));
+        $this->baseURL = $envBaseURL !== '' ? rtrim($envBaseURL, '/') . '/' : $this->detectBaseURL();
     }
 
     /**
-     * Auto-detect base URL from current request
+     * Auto-detect base URL from the current request or Railway public domain.
      */
     private function detectBaseURL(): string
     {
-        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        return $protocol . '://' . $host . '/';
+        $railwayDomain = getenv('RAILWAY_PUBLIC_DOMAIN');
+        if (is_string($railwayDomain) && $railwayDomain !== '') {
+            return 'https://' . $railwayDomain . '/';
+        }
+
+        $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+        if ($forwardedProto !== '') {
+            $protocol = explode(',', $forwardedProto)[0];
+        } else {
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http';
+        }
+
+        $host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $host = trim(explode(',', $host)[0]);
+
+        return rtrim($protocol, ':/') . '://' . $host . '/';
     }
 
     /**
@@ -59,7 +71,7 @@ class App extends BaseConfig
      * something else. If you have configured your web server to remove this file
      * from your site URIs, set this variable to an empty string.
      */
-    public string $indexPage = 'index.php';
+    public string $indexPage = '';
 
     /**
      * --------------------------------------------------------------------------

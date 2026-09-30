@@ -1,24 +1,12 @@
-# This file is deprecated - Railway now uses Railpack instead
-# See railpack.json for the current configuration
-# This file is kept for backward compatibility only
-
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "php82Extensions.pdo_pgsql"]
+nixPkgs = ["php82", "php82Packages.composer", "php82Extensions.pdo_pgsql", "php82Extensions.pgsql", "php82Extensions.intl", "php82Extensions.mbstring"]
 
 [phases.build]
 cmds = ["composer install --no-dev --optimize-autoloader"]
 
 [start]
-cmd = "php -S 0.0.0.0:$PORT -t public"
+cmd = "mkdir -p writable/cache writable/logs writable/session && php -S 0.0.0.0:$PORT -t public public/router.php"
 
 [variables]
 PHP_VERSION = "8.2"
 CI_ENVIRONMENT = "production"
-
-# Optional: Generate encryption key for production
-# Run locally: php spark key:generate
-# Then add the key to Railway environment variables
-# encryption.key = "your-generated-key-here"
-
-# Railway will provide these via environment variables
-# DATABASE_URL will be set by Railway automatically

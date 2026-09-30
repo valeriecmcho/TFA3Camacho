@@ -1,24 +1,6 @@
 {
-  "build": {
-    "builder": "railpack",
-    "buildCommand": "cp .env.railway .env && composer install --no-dev --optimize-autoloader",
-    "watchPatterns": [
-      "app/**",
-      "public/**",
-      "composer.json",
-      "composer.lock",
-      ".env.railway"
-    ]
-  },
+  "$schema": "https://schema.railpack.com",
   "deploy": {
-    "startCommand": "php -S 0.0.0.0:$PORT -t public 2>&1",
-    "healthcheckPath": "/health",
-    "healthcheckTimeout": 300,
-    "restartPolicyType": "on-failure",
-    "restartPolicyMaxRetries": 10
-  },
-  "environment": {
-    "PHP_VERSION": "8.2",
-    "CI_ENVIRONMENT": "production"
+    "startCommand": "mkdir -p writable/cache writable/logs writable/session && php -S 0.0.0.0:$PORT -t public public/router.php"
   }
 }

@@ -193,39 +193,52 @@ class Database extends Config
     {
         parent::__construct();
 
-        // Load environment variables
         $this->default['hostname'] = env('database.default.hostname', $this->default['hostname']);
         $this->default['username'] = env('database.default.username', $this->default['username']);
         $this->default['password'] = env('database.default.password', $this->default['password']);
         $this->default['database'] = env('database.default.database', $this->default['database']);
         $this->default['DBDriver'] = env('database.default.DBDriver', $this->default['DBDriver']);
-        $this->default['port'] = env('database.default.port', $this->default['port']);
+        $this->default['port']     = env('database.default.port', $this->default['port']);
 
-        // Support Railway PostgreSQL
-        if (getenv('DATABASE_URL')) {
-            try {
-                $dbUrl = parse_url(getenv('DATABASE_URL'));
-                if ($dbUrl && isset($dbUrl['host'])) {
-                    $this->default['hostname'] = $dbUrl['host'];
-                    $this->default['port'] = $dbUrl['port'] ?? 5432;
-                    $this->default['database'] = ltrim($dbUrl['path'] ?? '', '/');
-                    $this->default['username'] = $dbUrl['user'] ?? '';
-                    $this->default['password'] = $dbUrl['pass'] ?? '';
-                    $this->default['DBDriver'] = 'Postgre';
-                    $this->default['charset'] = 'utf8';
-                    $this->default['DBCollat'] = '';
-                }
-            } catch (\Exception $e) {
-                // If DATABASE_URL is invalid, use default configuration
-                log_message('error', 'Failed to parse DATABASE_URL: ' . $e->getMessage());
-            }
+        $databaseUrl = getenv('DATABASE_PRIVATE_URL')
+            ?: getenv('DATABASE_URL')
+            ?: getenv('POSTGRES_URL')
+            ?: getenv('DATABASE_PUBLIC_URL');
+
+        if (is_string($databaseUrl) && $databaseUrl !== '') {
+            $this->applyDatabaseUrl($databaseUrl);
+        } elseif (getenv('PGHOST')) {
+            $this->default['hostname'] = getenv('PGHOST') ?: $this->default['hostname'];
+            $this->default['port']     = getenv('PGPORT') ?: 5432;
+            $this->default['database'] = getenv('PGDATABASE') ?: $this->default['database'];
+            $this->default['username'] = getenv('PGUSER') ?: $this->default['username'];
+            $this->default['password'] = getenv('PGPASSWORD') ?: $this->default['password'];
+            $this->default['DBDriver'] = 'Postgre';
         }
 
-        // Check if we're using PostgreSQL for environment-specific settings
         if ($this->default['DBDriver'] === 'Postgre') {
-            $this->default['port'] = $this->default['port'] ?? 5432;
-            $this->default['charset'] = 'utf8';
+            $this->default['port']     = $this->default['port'] ?: 5432;
+            $this->default['charset']  = 'utf8';
             $this->default['DBCollat'] = '';
+            $this->default['schema']   = 'public';
+
+            $host = (string) $this->default['hostname'];
+            if (str_contains($host, 'rlwy.net') || str_contains($host, 'railway.app')) {
+                $this->default['sslmode'] = 'require';
+            } else {
+                $this->default['sslmode'] = $this->default['sslmode'] ?? 'prefer';
+            }
+
+            $password = str_replace(['\\', "'"], ['\\\\', "\\'"], (string) $this->default['password']);
+            $this->default['DSN'] = sprintf(
+                "host=%s port=%s dbname=%s user=%s password='%s' sslmode=%s",
+                $this->default['hostname'],
+                $this->default['port'],
+                $this->default['database'],
+                $this->default['username'],
+                $password,
+                $this->default['sslmode']
+            );
         }
 
         // Ensure that we always set the database group to 'tests' if
@@ -233,6 +246,34 @@ class Database extends Config
         // we don't overwrite live data on accident.
         if (ENVIRONMENT === 'testing') {
             $this->defaultGroup = 'tests';
+        }
+    }
+
+    /**
+     * Parse a Railway/Postgres DATABASE_URL into the default connection.
+     */
+    private function applyDatabaseUrl(string $databaseUrl): void
+    {
+        $dbUrl = parse_url($databaseUrl);
+        if ($dbUrl === false || ! isset($dbUrl['host'])) {
+            return;
+        }
+
+        $this->default['hostname'] = $dbUrl['host'];
+        $this->default['port']     = $dbUrl['port'] ?? 5432;
+        $this->default['database'] = ltrim($dbUrl['path'] ?? '', '/');
+        $this->default['username'] = isset($dbUrl['user']) ? urldecode($dbUrl['user']) : '';
+        $this->default['password'] = isset($dbUrl['pass']) ? urldecode($dbUrl['pass']) : '';
+        $this->default['DBDriver'] = 'Postgre';
+        $this->default['charset']  = 'utf8';
+        $this->default['DBCollat'] = '';
+        $this->default['schema']   = 'public';
+
+        if (! empty($dbUrl['query'])) {
+            parse_str($dbUrl['query'], $query);
+            if (! empty($query['sslmode'])) {
+                $this->default['sslmode'] = $query['sslmode'];
+            }
         }
     }
 }

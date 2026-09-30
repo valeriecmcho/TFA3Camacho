@@ -4,6 +4,8 @@
 
 🚀 **Live Repository:** https://github.com/valeriecmcho/TFA3Camacho.git
 
+Railway: follow **RAILWAY_DEPLOYMENT_GUIDE.md** (Dockerfile + PostgreSQL). Do not force HTTPS in env vars, and link `DATABASE_URL` from the Postgres service.
+
 ## What is CodeIgniter?
 
 CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
